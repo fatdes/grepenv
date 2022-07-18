@@ -4,7 +4,7 @@ tools to extract `env` tag and output to stdout
 
 ```bash
 # install
-go install github.com/fatdes/grepenv
+go install github.com/fatdes/grepenv@latest
 ```
 
 example output
