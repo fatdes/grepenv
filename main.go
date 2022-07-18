@@ -70,22 +70,15 @@ func main() {
 								}
 
 								envTag, err := tags.Get("env")
-								if err != nil {
-									panic(err)
-								}
-								if envTag == nil {
+								if err != nil || envTag == nil || envTag.Value() == "" {
 									continue
 								}
-								envDefault := ""
 								envDefaultTag, err := tags.Get("envDefault")
-								if err != nil {
-									panic(err)
-								}
-								if envDefaultTag != nil {
-									envDefault = envDefaultTag.Value()
+								if err != nil || envTag == nil {
+									continue
 								}
 
-								fmt.Fprintf(bb, "%s=%s\n", envTag.Value(), envDefault)
+								fmt.Fprintf(bb, "%s=%s\n", envTag.Value(), envDefaultTag.Value())
 								hasEnvTag = true
 							}
 						}
