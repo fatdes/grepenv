@@ -8,7 +8,6 @@ import (
 	"go/parser"
 	"go/token"
 	"io/fs"
-	"log"
 	"strings"
 
 	"github.com/fatih/structtag"
@@ -46,8 +45,6 @@ func (g *Grep) Execute() error {
 		b := &bytes.Buffer{}
 		fmt.Fprintf(b, "# ./%s\n", path)
 
-		log.Printf("processing %s\n", path)
-
 		hasStructWithEnvTag := false
 		for _, node := range f.Decls {
 			switch node.(type) {
@@ -61,8 +58,6 @@ func (g *Grep) Execute() error {
 
 						bb := &bytes.Buffer{}
 						fmt.Fprintf(bb, "## %s\n", typeSpec.Name.Name)
-
-						log.Printf("processing struct %s\n", typeSpec.Name.Name)
 
 						hasEnvTag := false
 						switch typeSpec.Type.(type) {
@@ -78,17 +73,23 @@ func (g *Grep) Execute() error {
 									panic(err)
 								}
 
+								envValue := ""
 								envTag, err := tags.Get("env")
 								if err != nil || envTag == nil || envTag.Value() == "" {
 									continue
 								}
+								envValue = envTag.Value()
+								if strings.Index(envValue, ",") >= 0 {
+									envValue = strings.Split(envValue, ",")[0]
+								}
+
 								envDefaultValue := ""
 								envDefaultTag, err := tags.Get("envDefault")
 								if err == nil {
 									envDefaultValue = envDefaultTag.Value()
 								}
 
-								fmt.Fprintf(bb, "%s=%s\n", envTag.Value(), envDefaultValue)
+								fmt.Fprintf(bb, "%s=%s\n", envValue, envDefaultValue)
 								hasEnvTag = true
 							}
 						}
