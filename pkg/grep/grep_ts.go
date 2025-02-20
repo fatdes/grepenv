@@ -19,7 +19,7 @@ func NewGrepTs(grep *Grep) *GrepTs {
 }
 
 func (g *GrepTs) Execute() error {
-	envPattern := regexp.MustCompile(`(?m).*process\.env\.\s*([-a-zA-Z_0-9]+)(?:.*\|\|\s*([^,\s]+))?`)
+	envPattern := regexp.MustCompile(`(?m).*process\.env\.\s*([-a-zA-Z_0-9]+)(?:.*(?:\|\||\?\?)\s*([^,)\s]+))?`)
 
 	return fs.WalkDir(g.fs, ".", func(path string, info fs.DirEntry, _ error) error {
 		if info.IsDir() {
